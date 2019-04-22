@@ -83,18 +83,18 @@ bool WriteBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData,
 
 int main( void )
 {
-    
     unsigned char *rgbData;
     unsigned char *header;
     unsigned int imageSize;
     unsigned int headerSize;
-    printf("Read\n");
+    cout << "Reading the BMP file ... " << endl;;
     ReadBMP("img/TRU256.bmp", header, rgbData, imageSize, headerSize);
-    printf("imageSize = %d \n", imageSize);
-    printf("Write\n");
+
+    cout << "Writing a new BMP file based on data read from a BPM in the previous step ..." << endl;;
     WriteBMP("img/test2.bmp", header, rgbData, imageSize, headerSize);
+    cout << "Freeing resources..." << endl;;
     delete rgbData;
     delete header;
-    printf("END\n");
+    cout << "This application has ended its execution." << endl;;
     return 0;
 }
