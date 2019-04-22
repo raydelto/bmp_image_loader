@@ -7,10 +7,10 @@
 #include <iostream>
 using namespace std;
 
-bool WriteBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &imageSize, unsigned int &headerSize);
-bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &imageSize, unsigned int &headerSize);
+bool WriteBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &headerSize, unsigned int &imageSize, bool flip);
+bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &headerSize, unsigned int &imageSize);
 
-bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &imageSize, unsigned int &headerSize)
+bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &headerSize, unsigned int &imageSize)
 {
     //BMP Header
     header = new unsigned char[54]; // 54-bytes Header
@@ -72,13 +72,31 @@ bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, 
     return true;
 }
 
-bool WriteBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &imageSize, unsigned int &headerSize)
+bool WriteBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &headerSize, unsigned int &imageSize, bool flip = false)
 {
+    unsigned char *flippedData = nullptr;
+    if(flip)
+    {
+        flippedData = new unsigned char[imageSize];
+        const short bytesPerPixel = (*(short*) &header[28]) /8;
+        int rgbaIndex = 0;
+        int j = 0;
+        for(int i = imageSize-1; i >= 0; i-=bytesPerPixel)
+        {
+            for(short k = 0 ; k < bytesPerPixel; k++)
+            {
+                flippedData[j+k] = rgbData[i - (bytesPerPixel-k-1) ];           
+            }
+            j+=bytesPerPixel;        
+        }
+    }
+
     FILE * file;
     file = fopen(imagepath.c_str(), "wb");
     fwrite(header , 1, headerSize, file);
-    fwrite(rgbData ,1, imageSize, file);
+    fwrite(flip ? flippedData : rgbData  ,1, imageSize, file);
     fclose(file);    
+    return true;
 }
 
 int main( void )
@@ -88,10 +106,10 @@ int main( void )
     unsigned int imageSize;
     unsigned int headerSize;
     cout << "Reading the BMP file ... " << endl;;
-    ReadBMP("img/TRU256.bmp", header, rgbData, imageSize, headerSize);
+    ReadBMP("img/test.bmp", header, rgbData, headerSize, imageSize);
 
     cout << "Writing a new BMP file based on data read from a BPM in the previous step ..." << endl;;
-    WriteBMP("img/test2.bmp", header, rgbData, imageSize, headerSize);
+    WriteBMP("img/test2.bmp", header, rgbData, headerSize, imageSize, true);
     cout << "Freeing resources..." << endl;;
     delete rgbData;
     delete header;
