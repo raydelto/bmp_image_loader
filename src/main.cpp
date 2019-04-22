@@ -7,7 +7,7 @@
 #include <iostream>
 using namespace std;
 
-bool WriteBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &headerSize, unsigned int &imageSize, bool flip);
+bool WriteBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &headerSize, unsigned int &imageSize, bool flip, bool gray);
 bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &headerSize, unsigned int &imageSize);
 
 bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &headerSize, unsigned int &imageSize)
@@ -72,14 +72,14 @@ bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, 
     return true;
 }
 
-bool WriteBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &headerSize, unsigned int &imageSize, bool flip = false)
+bool WriteBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &headerSize, unsigned int &imageSize, bool flip = false, bool gray = false)
 {
     unsigned char *flippedData = nullptr;
     if(flip)
     {
         flippedData = new unsigned char[imageSize];
         const short bytesPerPixel = (*(short*) &header[28]) /8;
-        int rgbaIndex = 0;
+        int rgbaIndex = 0; 
         int j = 0;
         for(int i = imageSize-1; i >= 0; i-=bytesPerPixel)
         {
@@ -89,6 +89,24 @@ bool WriteBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData,
             }
             j+=bytesPerPixel;        
         }
+    }
+    if(gray)
+    {
+        if(flip)
+        {
+            rgbData = flippedData;
+        }
+        const short bytesPerPixel = (*(short*) &header[28]) /8;
+        short gray;
+
+        //Applying a grayscale filter
+        for(int i = 0; i < imageSize; i += bytesPerPixel)
+        {   
+            gray = (rgbData[i] + rgbData[i + 1] + rgbData[i + 2]) / 3;
+            rgbData[i] = gray;
+            rgbData[i + 1] = gray;
+            rgbData[i + 2] = gray;
+        }    
     }
 
     FILE * file;
@@ -109,7 +127,7 @@ int main( void )
     ReadBMP("img/test.bmp", header, rgbData, headerSize, imageSize);
 
     cout << "Writing a new BMP file based on data read from a BPM in the previous step ..." << endl;;
-    WriteBMP("img/test2.bmp", header, rgbData, headerSize, imageSize, true);
+    WriteBMP("img/test2.bmp", header, rgbData, headerSize, imageSize, false, false);
     cout << "Freeing resources..." << endl;;
     delete rgbData;
     delete header;
