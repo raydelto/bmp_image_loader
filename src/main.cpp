@@ -14,7 +14,6 @@ bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, 
 {
     //BMP Header
     header = new unsigned char[54]; // 54-bytes Header
-    unsigned int dataPos;     // Position where data begins
     unsigned int width;
     unsigned int height;
     unsigned short bitsPerPixel;
@@ -30,29 +29,35 @@ bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, 
     //If it cannot read at least 54 bytes then this is not a valid BMP File
     //It the first two bytes are not "BM" respectively this is not a valid BMP file
 
-    if ( fread(header, 1, 138, file) != 138 || header[0] != 'B' || header[1] != 'M' ) 
+    if ( fread(header, 1, 54, file) != 54 || header[0] != 'B' || header[1] != 'M' ) 
     { 
         cerr  << "This is not a valid BMP file\n" << endl;
         return false;
     } 
 
-    //This header locations are specify on the bitmap format (http://www.fastgraph.com/help/bmp_header_format.html)
-    dataPos    = *(int*)&(header[10]);
-    imageSize  = *(int*)&(header[34]);
-    width      = *(int*)&(header[18]);
-    height     = *(int*)&(header[22]);
-    bitsPerPixel     = *(short*)&(header[28]);
+    //This header locations are specified on the bitmap format (http://www.fastgraph.com/help/bmp_header_format.html)
+    headerSize   = *(int*) &header[10];
+    imageSize    = *(int*) &header[34];
+    width        = *(int*) &header[18];
+    height       = *(int*) &header[22];
+    bitsPerPixel = *(short*) &header[28];
     
-
-    // Setting default values of imageSize and datapos if these were not found on the file
-    if (imageSize==0)
+    if (headerSize > 54)
     {
-        imageSize = width * height * 3; // 3 : One byte per each color component (Red, Green and Blue)
+        //Header size is greater than 54 bytes, let's read the whole header.
+        delete header;
+        header = new unsigned char[headerSize];
+        rewind(file);
+        fread(header, 1, headerSize, file);
+    }else if (headerSize==0)
+    {
+        headerSize = 54; // The BMP header has 54 bytes of that, the image should start right after the header
     }
 
-    if (dataPos==0)
+    // Setting default values of imageSize if it was not found on the file
+    if (imageSize==0)
     {
-        dataPos = 54; // The BMP header has 54 bytes of that, the image should start right after the header
+        imageSize = width * height * (bitsPerPixel / 8); 
     }
           
     // Create a buffer
@@ -64,7 +69,6 @@ bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, 
     //Everything is in memory now, the file can be closed
     fclose(file);
 
-    headerSize = dataPos;   
     return true;
 }
 
