@@ -7,10 +7,10 @@
 #include <iostream>
 using namespace std;
 
-bool WriteBMP(string imagepath, unsigned char *header, unsigned char *rgbData, unsigned int &imageSize, unsigned int &headerSize);
-bool ReadBMP(string imagepath, unsigned char *header, unsigned char *rgbData, unsigned int &imageSize, unsigned int &headerSize);
+bool WriteBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &imageSize, unsigned int &headerSize);
+bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &imageSize, unsigned int &headerSize);
 
-bool ReadBMP(string imagepath, unsigned char *header, unsigned char *rgbData, unsigned int &imageSize, unsigned int &headerSize)
+bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &imageSize, unsigned int &headerSize)
 {
     //BMP Header
     header = new unsigned char[54]; // 54-bytes Header
@@ -64,15 +64,11 @@ bool ReadBMP(string imagepath, unsigned char *header, unsigned char *rgbData, un
     //Everything is in memory now, the file can be closed
     fclose(file);
 
-    headerSize = dataPos;
-
-    WriteBMP("img/test2.bmp", header, rgbData, imageSize, headerSize);
-
-
+    headerSize = dataPos;   
     return true;
 }
 
-bool WriteBMP(string imagepath, unsigned char *header, unsigned char *rgbData, unsigned int &imageSize, unsigned int &headerSize)
+bool WriteBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &imageSize, unsigned int &headerSize)
 {
     FILE * file;
     file = fopen(imagepath.c_str(), "wb");
@@ -91,6 +87,10 @@ int main( void )
     printf("Read\n");
     ReadBMP("img/test.bmp", header, rgbData, imageSize, headerSize);
     printf("imageSize = %d \n", imageSize);
+    printf("Write\n");
+    WriteBMP("img/test2.bmp", header, rgbData, imageSize, headerSize);
+    delete rgbData;
+    delete header;
     printf("END\n");
     return 0;
 }
