@@ -89,7 +89,7 @@ int main( void )
     unsigned int imageSize;
     unsigned int headerSize;
     printf("Read\n");
-    ReadBMP("img/test.bmp", header, rgbData, imageSize, headerSize);
+    ReadBMP("img/TRU256.bmp", header, rgbData, imageSize, headerSize);
     printf("imageSize = %d \n", imageSize);
     printf("Write\n");
     WriteBMP("img/test2.bmp", header, rgbData, imageSize, headerSize);
