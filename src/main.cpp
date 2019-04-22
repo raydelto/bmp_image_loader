@@ -7,16 +7,13 @@
 #include <iostream>
 using namespace std;
 
-bool ReadBMP(string imagepath)
+bool ReadBMP(string imagepath, unsigned char *header, unsigned char *rgbData, unsigned int &imageSize)
 {
     //BMP Header
-    unsigned char header[54]; // 54-bytes Header
+    header = new unsigned char[54]; // 54-bytes Header
     unsigned int dataPos;     // Position where data begins
     unsigned int width;
     unsigned int height;
-    unsigned int imageSize;   // = width*height*3
-    // RGB data
-    unsigned char * data;   //Buffer where we're going to store all image bytes
 
     // Open the file
     FILE * file = fopen(imagepath.c_str(),"rb");
@@ -53,26 +50,40 @@ bool ReadBMP(string imagepath)
     }
           
     // Create a buffer
-    data = new unsigned char [imageSize];
+    rgbData = new unsigned char[imageSize];
 
     // Read the actual data from the file into the buffer
-    fread(data,1,imageSize,file);
+    fread(rgbData,1,imageSize,file);
 
     //Everything is in memory now, the file can be closed
     fclose(file);
 
-    
-    //Printing out the RGB components for debug purposes
-    for(int i = 0 ; i < imageSize; i++)
-    {
-        printf("%i\t", data[i]);
-    }
     return true;
+}
+
+bool WriteBMP(string imagepath, unsigned char *header, unsigned char *rgbData, unsigned int &imageSize)
+{
+    FILE * file;
+    file = fopen(imagepath.c_str(), "wb");
+    fwrite(header , 1, 54, file);
+    fclose (file);
+
+    file = fopen(imagepath.c_str(), "ab");
+    fwrite(rgbData ,1, imageSize, file);
+    fclose(file);    
 }
 
 
 int main( void )
 {
-    ReadBMP("img/test.bmp");
+    unsigned char *rgbData;
+    unsigned char *header;
+    unsigned int imageSize;
+    printf("Read\n");
+    ReadBMP("img/test.bmp", header, rgbData, imageSize);
+    printf("imageSize = %d \n", imageSize);
+    printf("Write\n");
+    WriteBMP("img/test2.bmp", header, rgbData, imageSize);
+    printf("END\n");
     return 0;
 }
