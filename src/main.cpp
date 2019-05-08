@@ -27,7 +27,7 @@ bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, 
     }
     
     //If it cannot read at least 54 bytes then this is not a valid BMP File
-    //It the first two bytes are not "BM" respectively this is not a valid BMP file
+    //If the first two bytes are not "BM" respectively this is not a valid BMP file
 
     if ( fread(header, 1, 54, file) != 54 || header[0] != 'B' || header[1] != 'M' ) 
     { 
