@@ -35,7 +35,7 @@ bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, 
         return false;
     } 
 
-    //This header locations are specified on the bitmap format (http://www.fastgraph.com/help/bmp_header_format.html)
+    //This header locations are specified on the bitmap format specification (http://www.fastgraph.com/help/bmp_header_format.html)
     headerSize   = *(int*) &header[10];
     imageSize    = *(int*) &header[34];
     width        = *(int*) &header[18];
@@ -49,12 +49,13 @@ bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, 
         header = new unsigned char[headerSize];
         rewind(file);
         fread(header, 1, headerSize, file);
-    }else if (headerSize==0)
+    }else if (headerSize==0) //If header size was not specified within the file header.
     {
-        headerSize = 54; // The BMP header has 54 bytes of that, the image should start right after the header
+        // The BMP header has 54 bytes of that, the image should start right after the header.
+        headerSize = 54; 
     }
 
-    // Setting default values of imageSize if it was not found on the file
+    // Setting default values of imageSize if it was not found on the file header.
     if (imageSize==0)
     {
         imageSize = width * height * (bitsPerPixel / 8); 
@@ -63,10 +64,10 @@ bool ReadBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData, 
     // Create a buffer
     rgbData = new unsigned char[imageSize];
 
-    // Read the actual data from the file into the buffer
+    // Read the actual data from the file into the buffer.
     fread(rgbData,1,imageSize,file);
 
-    //Everything is in memory now, the file can be closed
+    //Everything is in memory now, the file can be closed.
     fclose(file);
 
     return true;
@@ -85,6 +86,7 @@ bool WriteBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData,
         {
             for(short k = 0 ; k < bytesPerPixel; k++)
             {
+                //We are reading the data backwards but we still need the RGBA values on forward direction
                 flippedData[j+k] = rgbData[i - (bytesPerPixel-k-1) ];           
             }
             j+=bytesPerPixel;        
@@ -102,6 +104,8 @@ bool WriteBMP(string imagepath, unsigned char *&header, unsigned char *&rgbData,
         //Applying a grayscale filter
         for(int i = 0; i < imageSize; i += bytesPerPixel)
         {   
+            //We create a grayscale filter by giving the same value to all RGB components.
+            //The given value is the average of all components
             gray = (rgbData[i] + rgbData[i + 1] + rgbData[i + 2]) / 3;
             rgbData[i] = gray;
             rgbData[i + 1] = gray;
