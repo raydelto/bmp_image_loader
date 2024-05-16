@@ -16,6 +16,8 @@ int main(void)
     unsigned int headerSize;
     cout << "Reading the BMP file ... " << endl;
     ReadBMP("img/test.bmp", header, rgbData, headerSize, imageSize);
+    ApplyGrayFilter(header,rgbData);
+    FlipVertically(header,rgbData);
 
     cout << "Writing a new BMP file based on data read from a BMP in the previous step ..." << endl;
     WriteBMP("img/test2.bmp", header, rgbData, headerSize, imageSize);
