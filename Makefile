@@ -1,13 +1,13 @@
-SRC += src/main.cpp
+SRC = src/bmp_reader.cpp
 
-OBJ += bin/main.o
+OBJ = bin/bmp_reader.o
 
 WARNINGS=-w
 
-FLAGS=-std=c++11
+FLAGS=-std=c++14
 
 all:
 	g++ -c -g $(SRC) $(WARNINGS) $(FLAGS)
 	ls bin>/dev/null||mkdir bin
 	mv *.o ./bin
-	g++ -g $(OBJ) -o bin/main $(WARNINGS) $(FLAGS)
+	g++ src/main.cpp -g $(OBJ) -o bin/main $(WARNINGS) $(FLAGS)
