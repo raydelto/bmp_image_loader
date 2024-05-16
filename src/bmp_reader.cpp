@@ -29,11 +29,11 @@ bool ReadBMP(std::string imagepath, unsigned char *&header, unsigned char *&rgbD
         return false;
     }
 
-    headerSize = *(int *)&header[HEADER_SIZE_INDEX];
-    imageSize = *(int *)&header[IMAGE_SIZE_INDEX];
-    width = *(int *)&header[WIDTH_INDEX];
-    height = *(int *)&header[HEIGHT_INDEX];
-    bitsPerPixel = *(short *)&header[BITS_PER_PIXEL_INDEX];
+    headerSize = *(unsigned int *)&header[HEADER_SIZE_INDEX];
+    imageSize = *(unsigned int *)&header[IMAGE_SIZE_INDEX];
+    width = *(unsigned int *)&header[WIDTH_INDEX];
+    height = *(unsigned int *)&header[HEIGHT_INDEX];
+    bitsPerPixel = *(unsigned short *)&header[BITS_PER_PIXEL_INDEX];
 
     if (headerSize > HEADER_SIZE)
     {
@@ -79,8 +79,8 @@ bool WriteBMP(std::string imagepath, unsigned char *&header, unsigned char *&rgb
 
 bool ApplyGrayFilter(unsigned char *&header, unsigned char *&rgbData)
 {
-    const size_t imageSize = *(int *)&header[IMAGE_SIZE_INDEX];
-    const short bytesPerPixel = (*(short *)&header[BITS_PER_PIXEL_INDEX]) / BITS_PER_BYTE;
+    const size_t imageSize = *(unsigned int *)&header[IMAGE_SIZE_INDEX];
+    const short bytesPerPixel = (*(unsigned short *)&header[BITS_PER_PIXEL_INDEX]) / BITS_PER_BYTE;
     unsigned short gray;
 
     // Applying a grayscale filter
