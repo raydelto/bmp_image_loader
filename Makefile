@@ -2,7 +2,7 @@ SRC = src/bmp_reader.cpp
 
 OBJ = bin/bmp_reader.o
 
-WARNINGS=-w
+WARNINGS=-Wall
 
 FLAGS=-std=c++14
 

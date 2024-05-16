@@ -1,5 +1,6 @@
 #include "bmp_reader.h"
 #include <iostream>
+#include <algorithm>
 
 bool ReadBMP(std::string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &headerSize, unsigned int &imageSize)
 {
@@ -78,12 +79,12 @@ bool WriteBMP(std::string imagepath, unsigned char *&header, unsigned char *&rgb
 
 bool ApplyGrayFilter(unsigned char *&header, unsigned char *&rgbData)
 {
-    size_t imageSize = *(int *)&header[IMAGE_SIZE_INDEX];
+    const size_t imageSize = *(int *)&header[IMAGE_SIZE_INDEX];
     const short bytesPerPixel = (*(short *)&header[BITS_PER_PIXEL_INDEX]) / BITS_PER_BYTE;
     unsigned short gray;
 
     // Applying a grayscale filter
-    for (int i = 0; i < imageSize; i += bytesPerPixel)
+    for (size_t i = 0; i < imageSize; i += bytesPerPixel)
     {
         // We create a grayscale filter by giving the same value to all RGB components.
         // The given value is the average of all components
@@ -92,24 +93,25 @@ bool ApplyGrayFilter(unsigned char *&header, unsigned char *&rgbData)
         rgbData[i + 1] = gray;
         rgbData[i + 2] = gray;
     }
+    return true;
 }
 
 bool FlipVertically(unsigned char *&header, unsigned char *&rgbData)
 {
-    size_t imageSize = *(int *)&header[IMAGE_SIZE_INDEX];
-    unsigned char *flippedData = new unsigned char[imageSize];
-    const short bytesPerPixel = (*(short *)&header[BITS_PER_PIXEL_INDEX]) / BITS_PER_BYTE;
-    int rgbaIndex = 0;
-    int j = 0;
-    for (int i = imageSize - 1; i >= 0; i -= bytesPerPixel)
+    const size_t imageSize = *(int *)&header[IMAGE_SIZE_INDEX];
+    const unsigned short bytesPerPixel = (*(short *)&header[BITS_PER_PIXEL_INDEX]) / BITS_PER_BYTE;
+    unsigned int sp = 0;             // start pointer
+    unsigned int ep = imageSize - 1; // end pointer
+
+    while (sp < ep)
     {
         for (short k = 0; k < bytesPerPixel; k++)
         {
             // We are reading the data backwards but we still need the RGBA values on forward direction
-            flippedData[j + k] = rgbData[i - (bytesPerPixel - k - 1)];
+            std::swap(rgbData[sp + k], rgbData[ep - (bytesPerPixel - k - 1)]);
         }
-        j += bytesPerPixel;
+        sp += bytesPerPixel;
+        ep -= bytesPerPixel;
     }
-    delete rgbData;
-    rgbData = flippedData;
+    return true;
 }
