@@ -105,7 +105,7 @@ bool FlipVertically(unsigned char *&header, unsigned char *&rgbData)
 
     while (sp < ep)
     {
-        for (short k = 0; k < bytesPerPixel; k++)
+        for (unsigned short k = 0; k < bytesPerPixel; k++)
         {
             // We are reading the data backwards but we still need the RGBA values on forward direction
             std::swap(rgbData[sp + k], rgbData[ep - (bytesPerPixel - k - 1)]);
