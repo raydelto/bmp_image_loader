@@ -11,3 +11,5 @@ all:
 	ls bin>/dev/null||mkdir bin
 	mv *.o ./bin
 	g++ src/main.cpp -g $(OBJ) -o bin/main $(WARNINGS) $(FLAGS)
+clean:
+	rm -rf bin
