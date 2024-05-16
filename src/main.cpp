@@ -18,7 +18,7 @@ int main(void)
     ReadBMP("img/test.bmp", header, rgbData, headerSize, imageSize);
 
     cout << "Writing a new BMP file based on data read from a BMP in the previous step ..." << endl;
-    WriteBMP("img/test2.bmp", header, rgbData, headerSize, imageSize, true, false);
+    WriteBMP("img/test2.bmp", header, rgbData, headerSize, imageSize);
     cout << "Freeing resources..." << endl;
     delete rgbData;
     delete header;
