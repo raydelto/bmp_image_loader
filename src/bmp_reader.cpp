@@ -52,7 +52,7 @@ bool ReadBMP(std::string imagepath, unsigned char *&header, unsigned char *&rgbD
     // Setting default values of imageSize if it was not found on the file header.
     if (imageSize == 0)
     {
-        imageSize = width * height * (bitsPerPixel / 8);
+        imageSize = width * height * (bitsPerPixel / BITS_PER_BYTE);
     }
 
     // Create a buffer
