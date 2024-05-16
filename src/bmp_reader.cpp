@@ -5,7 +5,7 @@
 bool ReadBMP(std::string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &headerSize, unsigned int &imageSize)
 {
     // BMP Header
-    header = new unsigned char[54]; // 54-bytes Header
+    header = new unsigned char[HEADER_SIZE];
     unsigned int width;
     unsigned int height;
     unsigned short bitsPerPixel;
@@ -22,7 +22,7 @@ bool ReadBMP(std::string imagepath, unsigned char *&header, unsigned char *&rgbD
     // If it cannot read at least 54 bytes then this is not a valid BMP File
     // If the first two bytes are not "BM" respectively this is not a valid BMP file
 
-    if (fread(header, 1, 54, file) != 54 || header[0] != 'B' || header[1] != 'M')
+    if (fread(header, 1, HEADER_SIZE, file) != HEADER_SIZE || header[0] != 'B' || header[1] != 'M')
     {
         std::cerr << "This is not a valid BMP file"
                   << std::endl;
@@ -35,9 +35,9 @@ bool ReadBMP(std::string imagepath, unsigned char *&header, unsigned char *&rgbD
     height = *(int *)&header[HEIGHT_INDEX];
     bitsPerPixel = *(short *)&header[BITS_PER_PIXEL_INDEX];
 
-    if (headerSize > 54)
+    if (headerSize > HEADER_SIZE)
     {
-        // Header size is greater than 54 bytes, let's read the whole header.
+        // Header size is greater than 54 bytes, let's re-read the whole header.
         delete header;
         header = new unsigned char[headerSize];
         rewind(file);
@@ -46,7 +46,7 @@ bool ReadBMP(std::string imagepath, unsigned char *&header, unsigned char *&rgbD
     else if (headerSize == 0) // If header size was not specified within the file header.
     {
         // The BMP header has 54 bytes of that, the image should start right after the header.
-        headerSize = 54;
+        headerSize = HEADER_SIZE;
     }
 
     // Setting default values of imageSize if it was not found on the file header.
