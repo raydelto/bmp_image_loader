@@ -6,10 +6,12 @@ WARNINGS=-Wall
 
 FLAGS=-std=c++14 -O3
 
+CXX = clang++
+
 all:
-	g++ -c $(SRC) $(WARNINGS) $(FLAGS)
+	$(CXX) -c $(SRC) $(WARNINGS) $(FLAGS)
 	ls bin>/dev/null||mkdir bin
 	mv *.o ./bin
-	g++ src/main.cpp $(OBJ) -o bin/main $(WARNINGS) $(FLAGS)
+	$(CXX) src/main.cpp $(OBJ) -o bin/main $(WARNINGS) $(FLAGS)
 clean:
 	rm -rf bin
