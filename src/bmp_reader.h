@@ -15,3 +15,4 @@ bool ReadBMP(std::string imagepath, unsigned char *&header, unsigned char *&rgbD
 bool WriteBMP(std::string imagepath, unsigned char *&header, unsigned char *&rgbData, size_t headerSize, size_t imageSize);
 bool ApplyGrayFilter(unsigned char *&header, unsigned char *&rgbData);
 bool FlipVertically(unsigned char *&header, unsigned char *&rgbData);
+bool FlipHorizontally(unsigned char *&header, unsigned char *&rgbData);
