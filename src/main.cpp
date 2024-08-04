@@ -1,29 +1,37 @@
-/*
- *    BMP Loader written by Raydelto Hernandez  (raydelto@yahoo.com)
- */
-
 #include <cstdio>
 #include <string>
 #include <iostream>
 #include "bmp_reader.h"
-using namespace std;
 
 int main(void)
 {
-    unsigned char *rgbData;
-    unsigned char *header;
+    unsigned char *rgbData = nullptr;
+    unsigned char *header = nullptr;
     unsigned int imageSize;
     unsigned int headerSize;
-    cout << "Reading the BMP file ... " << endl;
-    ReadBMP("img/test.bmp", header, rgbData, headerSize, imageSize);
-    ApplyGrayFilter(header,rgbData);
-    FlipVertically(header,rgbData);
 
-    cout << "Writing a new BMP file based on data read from a BMP in the previous step ..." << endl;
-    WriteBMP("img/test2.bmp", header, rgbData, headerSize, imageSize);
-    cout << "Freeing resources..." << endl;
-    delete rgbData;
-    delete header;
-    cout << "This application has ended its execution." << endl;
+    std::cout << "Leyendo el archivo BMP ..." << std::endl;
+    if (!ReadBMP("img/test.bmp", header, rgbData, headerSize, imageSize))
+    {
+        std::cerr << "Error al leer el archivo BMP." << std::endl;
+        return 1;
+    }
+
+    ApplyGrayFilter(header, rgbData);      // Aplica el filtro de escala de grises
+    FlipVertically(header, rgbData);      // Voltea la imagen verticalmente
+    FlipHorizontally(header, rgbData);    // Voltea la imagen horizontalmente
+
+    std::cout << "Escribiendo un nuevo archivo BMP basado en los datos leídos del BMP anterior ..." << std::endl;
+    if (!WriteBMP("img/TRU256.bmp", header, rgbData, headerSize, imageSize))
+    {
+        std::cerr << "Error al escribir el archivo BMP." << std::endl;
+        return 1;
+    }
+
+    std::cout << "Liberando recursos..." << std::endl;
+    delete[] rgbData;  
+    delete[] header;   
+    std::cout << "La aplicación ha terminado su ejecución." << std::endl;
     return 0;
 }
+
