@@ -1,6 +1,7 @@
 #include "bmp_reader.h"
 #include <iostream>
 #include <algorithm>
+#include <cstring>
 
 bool ReadBMP(std::string imagepath, unsigned char *&header, unsigned char *&rgbData, unsigned int &headerSize, unsigned int &imageSize)
 {
