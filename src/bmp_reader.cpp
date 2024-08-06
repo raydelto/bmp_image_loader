@@ -115,3 +115,28 @@ bool FlipVertically(unsigned char *&header, unsigned char *&rgbData)
     }
     return true;
 }
+
+bool FlipHorizontally(unsigned char *&header, unsigned char *&rgbData)
+{
+    const unsigned short bytesPerPixel = (*(short *)&header[BITS_PER_PIXEL_INDEX]) / BITS_PER_BYTE;
+    const size_t width = *(int *)&header[WIDTH_INDEX];
+    const size_t height = *(int *)&header[HEIGHT_INDEX];
+
+    for (size_t y = 0; y < height; y++)
+    {
+        size_t sp = y * width * bytesPerPixel; // start pointer of the row
+        size_t ep = (y + 1) * width * bytesPerPixel - bytesPerPixel; // end pointer of the row
+
+        while (sp < ep)
+        {
+            for (unsigned short k = 0; k < bytesPerPixel; k++)
+            {
+                // Same as before we read the data backwards
+                std::swap(rgbData[sp + k], rgbData[ep + k]);
+            }
+            sp += bytesPerPixel;
+            ep -= bytesPerPixel;
+        }
+    }
+    return true;
+}
