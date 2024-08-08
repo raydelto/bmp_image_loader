@@ -115,3 +115,29 @@ bool FlipVertically(unsigned char *&header, unsigned char *&rgbData)
     }
     return true;
 }
+
+bool FlipHorizontally(unsigned char *&header, unsigned char *&rgbData)
+{
+    const unsigned short bytesPerPixel = (*(short *)&header[BITS_PER_PIXEL_INDEX]) / BITS_PER_BYTE;
+    const size_t width = *(int *)&header[WIDTH_INDEX];
+    const size_t height = *(int *)&header[HEIGHT_INDEX];
+
+    for (size_t y = 0; y < height; y++)
+    {
+        unsigned char* rowStart = rgbData + y * width * bytesPerPixel;
+        unsigned char* rowEnd = rowStart + (width - 1) * bytesPerPixel;
+
+        for (size_t x = 0; x < width / 2; x++)
+        {
+            std::swap_ranges(
+
+                rowStart + x * bytesPerPixel, 
+                rowStart + (x + 1) * bytesPerPixel, 
+                rowEnd - x * bytesPerPixel
+                
+            );
+        }
+    }
+    return true;
+}
+
