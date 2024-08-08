@@ -1,6 +1,7 @@
 {
   "ExpandedNodes": [
     "",
+    "\\img",
     "\\src"
   ],
   "SelectedNode": "\\src\\bmp_reader.cpp",

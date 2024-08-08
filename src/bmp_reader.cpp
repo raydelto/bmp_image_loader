@@ -118,24 +118,26 @@ bool FlipVertically(unsigned char *&header, unsigned char *&rgbData)
 
 bool FlipHorizontally(unsigned char *&header, unsigned char *&rgbData)
 {
-    const unsigned int width = *(unsigned int *)&header[WIDTH_INDEX];
-    const unsigned int height = *(unsigned int *)&header[HEIGHT_INDEX];
-    const unsigned short bytesPerPixel = (*(unsigned short *)&header[BITS_PER_PIXEL_INDEX]) / BITS_PER_BYTE;
-    const unsigned int rowSize = width * bytesPerPixel;
+    const unsigned short bytesPerPixel = (*(short *)&header[BITS_PER_PIXEL_INDEX]) / BITS_PER_BYTE;
+    const size_t width = *(int *)&header[WIDTH_INDEX];
+    const size_t height = *(int *)&header[HEIGHT_INDEX];
 
-    for (unsigned int y = 0; y < height; ++y)
+    for (size_t y = 0; y < height; y++)
     {
-        unsigned char *rowStart = rgbData + y * rowSize;
-        unsigned char *rowEnd = rowStart + rowSize - bytesPerPixel;
-        while (rowStart < rowEnd)
+        unsigned char* rowStart = rgbData + y * width * bytesPerPixel;
+        unsigned char* rowEnd = rowStart + (width - 1) * bytesPerPixel;
+
+        for (size_t x = 0; x < width / 2; x++)
         {
-            for (unsigned short k = 0; k < bytesPerPixel; ++k)
-            {
-                std::swap(rowStart[k], rowEnd[k]);
-            }
-            rowStart += bytesPerPixel;
-            rowEnd -= bytesPerPixel;
+            std::swap_ranges(
+
+                rowStart + x * bytesPerPixel, 
+                rowStart + (x + 1) * bytesPerPixel, 
+                rowEnd - x * bytesPerPixel
+                
+            );
         }
     }
     return true;
 }
+
