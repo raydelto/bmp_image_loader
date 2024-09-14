@@ -38,7 +38,7 @@ bool ReadBMP(std::string imagepath, unsigned char *&header, unsigned char *&rgbD
     if (headerSize > HEADER_SIZE)
     {
         // Header size is greater than 54 bytes, let's re-read the whole header.
-        delete header;
+        delete[] header;
         header = new unsigned char[headerSize];
         rewind(file);
         fread(header, 1, headerSize, file);
