@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-// This header location indices are specified on the bitmap format specification (http://www.fastgraph.com/help/bmp_header_format.html)
+// This header location indices are specified on the bitmap format specification - (http://www.fastgraph.com/help/bmp_header_format.html)
 constexpr unsigned short HEADER_SIZE_INDEX = 10;
 constexpr unsigned short IMAGE_SIZE_INDEX = 34;
 constexpr unsigned short WIDTH_INDEX = 18;
