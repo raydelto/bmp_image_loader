@@ -1,5 +1,5 @@
 /*
- *    BMP Loader written by Raydelto Hernandez  (raydelto@yahoo.com)
+ *    BMP Loader written by Raydelto Hernandez (raydelto@yahoo.com)
  */
 
 #include <cstdio>
