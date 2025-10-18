@@ -115,3 +115,31 @@ bool FlipVertically(unsigned char *&header, unsigned char *&rgbData)
     }
     return true;
 }
+
+bool FlipHorizontally(unsigned char *&header, unsigned char *&rgbData)
+{
+    const unsigned int width = *(unsigned int *)&header[WIDTH_INDEX];
+    const unsigned int height = *(unsigned int *)&header[HEIGHT_INDEX];
+    const unsigned short bytesPerPixel = (*(unsigned short *)&header[BITS_PER_PIXEL_INDEX]) / BITS_PER_BYTE;
+    
+    const unsigned int rowStrdeNoPad = width * bytesPerPixel;
+    const unsigned int rowStride = (rowStrdeNoPad + 3) & ~3U; // redondeo a multiplo de 4
+
+    for (unsigned int y = 0; y < height; ++y)
+    {
+        unsigned char *row = rgbData + y * rowStride;
+
+        for (unsigned int x = 0; x < width / 2; ++x)
+        {
+            const unsigned int leftIndex  = x * bytesPerPixel;
+            const unsigned int rightIndex = (width - 1 - x) * bytesPerPixel;
+
+            // Intercambio de los bytes del píxel completo (B,G,R[,A])
+            for (unsigned short k = 0; k < bytesPerPixel; ++k)
+            {
+                std::swap(row[leftIndex + k], row[rightIndex + k]);
+            }
+        }
+    }
+    return true;
+}
